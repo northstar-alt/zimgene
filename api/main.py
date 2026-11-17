@@ -1,6 +1,15 @@
+import os
 from fastapi import FastAPI, HTTPException, Query
-from flask import app
+from fastapi.middleware.cors import CORSMiddleware
+
 import db
+
+origins = [
+    o.strip()
+    for o in os.getenv(
+        "CORS_ORIGINS", "http://localhost:3000,http://localhost:5173"
+    ).split(",")
+]
 
 app = FastAPI(
     title = "ZNGD API",
@@ -8,11 +17,9 @@ app = FastAPI(
     version = "0.1.0",
 )
 
-from fastapi.middleware.cors import CORSMiddleware
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5137"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["GET"],
     allow_headers=["*"],
@@ -26,11 +33,15 @@ def root():
 
 
 @app.get("/species")
-def list_species():
-    """Return every species in the database."""
+def list_species(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0),
+):
+
+    """Return species> Use ?limit= and ?offset= to page through."""
     conn = db.get_connection()
     try:
-        return db.get_all_species(conn)
+        return db.get_all_species(conn, limit, offset)
     finally:
         conn.close()
 
@@ -49,11 +60,14 @@ def get_species(species_id: int):
 
 
 @app.get("/pathogens")
-def list_pathogens():
-    """Return every pathogen in the database."""
+def list_pathogens(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0)
+):
+    """Return pathogens. Use ?limit= and ?offset= to page through."""
     conn = db.get_connection()
     try:
-        return db.get_all_pathogens(conn)
+        return db.get_all_pathogens(conn, limit, offset)
     finally:
         conn.close()
 
@@ -72,11 +86,11 @@ def get_pathogen(pathogen_id: int):
 
 
 @app.get("/organisms")
-def list_organisms(host_status: str = None, species_name: str = None, pathogen_name: str = None):
-    """Return every organism, with readable species and pathogen information. Optionally filter by host_status, species_name, and/or pathogen_name."""
+def list_organisms(host_status: str = None, species_name: str = None, pathogen_name: str = None, limit: int = Query(100, ge=1, le=500), offset: int = Query(0, ge=0)):
+    """Return one page of organisms..."""
     conn = db.get_connection()
     try:
-        return db.get_all_organisms(conn, host_status, species_name, pathogen_name)
+        return db.get_all_organisms(conn, host_status, species_name, pathogen_name, limit, offset)
     finally:
         conn.close()
 
@@ -122,11 +136,14 @@ def get_sequence(sequence_id: int):
 
 
 @app.get("/collection_site")
-def list_collection_sites():
-    """Return every collection site in the database."""
+def list_collection_sites(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0)
+):
+    """Return collection sites. Use ?limit= and ?offset= to page through results."""
     conn = db.get_connection()
     try:
-        return db.get_all_collection_sites(conn)
+        return db.get_all_collection_sites(conn, limit, offset)
     finally:
         conn.close()
 
@@ -145,11 +162,14 @@ def get_collection_site(site_id: int):
 
 
 @app.get("/qc")
-def list_qc_metrics():
-    """Return every row in the qc table in the database."""
+def list_qc_metrics(
+    limit: int = Query(100, ge=1, le=500),
+    offset: int = Query(0, ge=0)
+):
+    """Return QC metrics. Use ?limit= and ?offset= to page through results."""
     conn = db.get_connection()
     try:
-        return db.get_all_qc_metrics(conn)
+        return db.get_all_qc_metrics(conn, limit, offset)
     finally:
         conn.close()
 

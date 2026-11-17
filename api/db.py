@@ -6,7 +6,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_connection():
-    """Open a new connection to the prototype database using .env settings."""
+    """Connect using DATABASE_URL if set, otherwise the local PG_* settings."""
+    database_url = os.getenv("DATABASE_URL")
+    if database_url:
+        return psycopg.connect(
+            database_url,
+            row_factory=dict_row,
+        )
     return psycopg.connect(
         host=os.getenv("PG_HOST", "localhost"),
         port=os.getenv("PG_PORT", "5432"),
@@ -16,10 +22,10 @@ def get_connection():
         row_factory=dict_row,
     )
 
-def get_all_species(conn):
-    """Return every row in the species table."""
+def get_all_species(conn, limit=100, offset=0):
+    """Return species, one page at a time."""
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM species ORDER BY species_id;")
+        cur.execute("SELECT * FROM species ORDER BY species_id LIMIT %s OFFSET %s;", (limit, offset))
         return cur.fetchall()
 
 def get_species_by_id(conn, species_id):
@@ -31,10 +37,10 @@ def get_species_by_id(conn, species_id):
               )
         return cur.fetchone()
 
-def get_all_pathogens(conn):
-    """Return every row in the pathogens table."""
+def get_all_pathogens(conn, limit=100, offset=0):
+    """Return pathogens, one page at a time."""
     with conn.cursor() as cur:
-        cur.execute("SELECT * FROM pathogen ORDER BY pathogen_id;")
+        cur.execute("SELECT * FROM pathogen ORDER BY pathogen_id LIMIT %s OFFSET %s;", (limit, offset))
         return cur.fetchall()
 
 def get_pathogen_by_id(conn, pathogen_id):
@@ -46,8 +52,8 @@ def get_pathogen_by_id(conn, pathogen_id):
               )
         return cur.fetchone()
 
-def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=None):
-    """Return every organism, joined with its species and pathogen information. Optionally filter by host_status, species_name, and/or pathogen_name."""
+def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=None, limit=100, offset=0):
+    """Return one page of organisms..."""
     query = """
         SELECT 
             o.organism_id,
@@ -76,10 +82,10 @@ def get_all_organisms(conn, host_status=None, species_name=None, pathogen_name=N
         query += " AND p.scientific_name = %s"
         params.append(pathogen_name)
 
-    query += " ORDER BY o.organism_id;"
+    query += " ORDER BY o.organism_id LIMIT %s OFFSET %s;"
 
     with conn.cursor() as cur:
-        cur.execute(query, params)
+        cur.execute(query, params + [limit, offset])
         return cur.fetchall()
 
 
@@ -135,8 +141,8 @@ def get_sequence_by_id(conn, sequence_id):
         return cur.fetchone()
 
 
-def get_all_collection_sites(conn):
-    """Return every row in the collection_site table."""
+def get_all_collection_sites(conn, limit=100, offset=0):
+    """Return every site, one page at a time."""
     query = """
         SELECT 
         site_id,
@@ -166,15 +172,16 @@ def get_collection_site_by_id(conn, site_id):
         return cur.fetchone()
 
 
-def get_all_qc_metrics(conn):
+def get_all_qc_metrics(conn, limit=100, offset=0):
     """Return every row in the qc table in the database."""
     query = """
         SELECT *
         FROM qc
-        ORDER BY qc_id;
+        ORDER BY qc_id
+        LIMIT %s OFFSET %s;
     """
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, (limit, offset))
         return cur.fetchall()
 
 

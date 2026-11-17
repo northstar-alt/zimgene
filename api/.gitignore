@@ -2,3 +2,5 @@ __pycache__/
 .env
 *.pem
 mkcert.exe
+.neon
+node_modules/
