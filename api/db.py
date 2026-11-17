@@ -153,10 +153,11 @@ def get_all_collection_sites(conn, limit=100, offset=0):
         longitude,
         site_type
         FROM collection_site
-        ORDER BY site_id;
+        ORDER BY site_id
+        LIMIT %s OFFSET %s;
     """
     with conn.cursor() as cur:
-        cur.execute(query)
+        cur.execute(query, (limit, offset))
         return cur.fetchall()
 
 
