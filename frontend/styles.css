@@ -1,0 +1,55 @@
+:root {
+    --flag-green: #319208;
+    --deep-green: #14532d;
+    --flag-yellow: #ffd200;
+    --flag-red: #de2010;
+    --ink: #111111;
+}
+
+.flag-stripe {
+    height: 14px;
+    background: linear-gradient(to bottom,
+    var(--flag-green) 0 14.28%, var(--flag-yellow) 14.28% 28.57%,
+    var(--flag-red) 28.57% 42.86%, #000 42.86% 57.14%,
+    var(--flag-red) 57.14% 71.43%, var(--flag-yellow) 71.43% 85.71%,
+    var(--flag-green) 85.71% 100%);    
+}
+
+body {
+    font-family: system-ui, sans-serif;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    color: #1a1a1a;
+    line-height: 1.5;
+}
+
+h1 {
+    color: var(--deep-green);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background: var(--deep-green);
+    color: white;
+}
+
+tr:hover td {
+    background: #f0fdf4;
+}
+
+select {
+    padding: 0.4rem;
+    font-size: 1rem;
+}

@@ -4,11 +4,30 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ZimGENE</title>
+        <link rel="stylesheet" href="styles.css">
     </head>
     <body>
+        <div class="flag-stripe"></div>
         <h1>ZimGENE</h1>
         <p>Zimbabwe-focused genomic curation prototype</p>
         <ul id="species-list"></ul>
+        <h2>Organisms</h2>
+        <select id="status-filter">
+            <option value="">All</option>
+            <option value="infected">Infected</option>
+            <option value="healthy">Healthy</option>
+        </select>
+        <table id="organism-table">
+            <thead>
+                <tr>
+                    <th>Species</th>
+                    <th>Pathogen</th>
+                    <th>Status</th>
+                    <th>Collected</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
         <script src="app.js"></script>
     </body>
 </html>

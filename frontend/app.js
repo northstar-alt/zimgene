@@ -22,3 +22,37 @@ async function loadSpecies() {
 }
 
 loadSpecies();
+
+async function loadOrganisms() {
+    const status = document.getElementById("status-filter").value;
+    const query = status ? `?host_status=${status}` : "";
+    const body = document.querySelector("#organism-table tbody");
+    body.textContent = "";
+    try {
+        const response = await fetch(`${API_URL}/organisms${query}`);
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        const organisms = await response.json();
+        for (const o of organisms) {
+            const row = document.createElement("tr");
+            const cells = [
+                o.species_name,
+                o.pathogen_name ?? "None (healthy)",
+                o.host_status,
+                o.collection_date,
+            ];
+            for (const text of cells) {
+                const cell = document.createElement("td");
+                cell.textContent = text;
+                row.appendChild(cell);  
+            }
+            body.appendChild(row);
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+document.getElementById("status-filter").addEventListener("change", loadOrganisms);
+loadOrganisms();
