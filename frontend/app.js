@@ -56,3 +56,61 @@ async function loadOrganisms() {
 
 document.getElementById("status-filter").addEventListener("change", loadOrganisms);
 loadOrganisms();
+
+const PAGE_SIZE = 10;
+let sequenceOffset = 0;
+
+async function loadSequences() {
+    const body = document.querySelector("#sequence-table tbody");
+    body.textContent = "";
+    try {
+        const response = await fetch(
+            `${API_URL}/sequences?limit=${PAGE_SIZE + 1}&offset=${sequenceOffset}`
+        );
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        const rows = await response.json();
+        const hasNext = rows.length > PAGE_SIZE;
+        const page = rows .slice(0, PAGE_SIZE);
+
+        for (const s of page) {
+            const row = document.createElement("tr");
+
+           const accessionCell = document.createElement("td");
+           const link = document.createElement("a");
+           link.href = `https://www.ncbi.nlm.nih.gov/nuccore/${encodeURIComponent(s.ncbi_accession)}`;
+           link.textContent = s.ncbi_accession;
+           link.target = "_blank";
+           link.rel = "noopener";
+           accessionCell.appendChild(link);
+           row.appendChild(accessionCell);
+
+           for (const text of [s.sequence_type, s.sequence_length, s.gc_content]) {
+                const cell = document.createElement("td");
+                cell.textContent = text;
+                row.appendChild(cell);
+            }
+            body.appendChild(row);
+        }
+
+        document.getElementById("page-label").textContent = 
+            ` Page ${sequenceOffset / PAGE_SIZE + 1} `;
+        document.getElementById("prev-page").disabled = sequenceOffset === 0;
+        document.getElementById("next-page").disabled = !hasNext;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+document.getElementById("prev-page").addEventListener("click", () => {
+    sequenceOffset -= PAGE_SIZE;
+    loadSequences();
+});
+
+document.getElementById("next-page").addEventListener("click", () => {
+    sequenceOffset += PAGE_SIZE;
+    loadSequences();
+});
+
+loadSequences();
