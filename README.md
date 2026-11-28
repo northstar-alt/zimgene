@@ -32,11 +32,27 @@ HTML/CSS/JavaScript. Hosted on Render.
 |---|---|
 | /species, /species/{id} | Host species |
 | /pathogens, /pathogens/{id} | Pathogens |
-| /organisms | Specimens (filter: host_status, species_name, pathogen_name) |
+| /organisms | Specimens (filters: host_status, species_name, pathogen_name) |
 | /sequences, /sequences/{id} | Sequence summaries and full records |
-| /collection_site, /qc | Collection sites and QC records |
+| /collection_site, /collection_site/{id} | Collection sites |
+| /qc, /qc/{id} | QC records |
 
 All list endpoints support ?limit= and ?offset=.
+
+---
+
+## Database schema
+
+Defined in `sql/zimgene_schema.sql` (9 tables):
+
+1. `species`, `pathogen`: reference tables for hosts (livestock, plants) and pathogens
+2. `collection_site`: district, province, and coordinates
+3. `contributor`: people who curate or submit data
+4. `organism`: specimen records linking host, pathogen, site, and collector
+5. `sequence`: nucleotide sequence, length, GC percentage, and JSONB feature annotations
+6. `submission`: tracks submission status of sequences (not yet used)
+7. `qc`: quality-control records per sequence
+8. `audit_log`: change tracking for inserts, updates, and deletes
 
 ---
 
@@ -64,7 +80,7 @@ NCBI_EMAIL=your_email@example.com
 NCBI_API_KEY=optional
 ```
 
-Then: `pip install -r requirements.txt` and `python ingest.py`
+Then run `pip install -r requirements.txt` and `python ingest.py`
 
 ### 3. API (`api/`)
 Create `api/.env` with the same `PG_*` values (or a single `DATABASE_URL` for a hosted database), then:
@@ -79,26 +95,19 @@ Set `CORS_ORIGINS` to your frontend's address if it differs from the localhost d
 ### 4. Frontend (`frontend/`)
 Set `API_URL` at the top of `app.js`, then run `python -m http.server 5500` from that folder.
 
+## 5. R plots (`r/`)
+Open `visualization.R` in RStudio, choose Session > Set Working Directory >
+To Source File Location, and run the script. It asks for the database password.
+
  ---
 
  ## Data and limitations
+
 - Sequence data comes from NCBI GenBank. Search results are filtered
   to exclude PDB and patent records, but records are not independently verified.
 - QC records mark NCBI accessions as pre-validated; no independent
   coverage analysis is performed at this stage.
 - The free hosting tier sleeps when idle, so the first request can take up to a minute.
-
----
-
-## Database Architecture Highlights
-
-The PostgreSQL schema (`zngd_schema.sql`) uses a normalized structure:
-
-1. **`species` & `pathogen`**: Reference tables for hosts (livestock/plants) and infectious pathogens.
-2. **`collection_site`**: Geographic locations tracking district, province, and coordinates.
-3. **`organism`**: Specimen records linking host, pathogen, collection site, and contributor.
-4. **`sequence`**: Genomic sequence records containing raw FASTA sequences, length, GC percentage, and `JSONB` feature annotations.
-5. **`audit_log`**: Generic change-tracking table capturing `insert`, `update`, and `delete` events as JSON objects.
 
 ---
 

@@ -1,5 +1,5 @@
 -- =====================================================================
--- ZNGD Prototype Schema
+-- ZimGENE Prototype Schema
 -- Zimbabwe-focused genomic curation database (livestock & plant hosts,
 -- their pathogens, and NCBI-sourced sequence data)
 -- Target: PostgreSQL 18
@@ -7,7 +7,7 @@
 -- =====================================================================
 
 -- ---------------------------------------------------------------------
--- 1. species — host organisms (livestock, plants) tracked by ZNGD
+-- 1. species — host organisms (livestock, plants) tracked by ZimGENE
 -- ---------------------------------------------------------------------
 CREATE TABLE species (
     species_id      BIGSERIAL PRIMARY KEY,

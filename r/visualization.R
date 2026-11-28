@@ -4,8 +4,6 @@ library(dplyr)
 library(jsonlite)
 library(ggplot2)
 
-setwd("C:/Users/Shania Makuvire/OneDrive/desktop/zngd_prototype")
-
 con <- dbConnect(
   RPostgres::Postgres(),
   host = "localhost",
