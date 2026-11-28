@@ -12,7 +12,7 @@ origins = [
 ]
 
 app = FastAPI(
-    title = "ZNGD API",
+    title = "ZimGENE API",
     description = "Read-only API for the Zimbabwe genomic curation prototype.",
     version = "0.1.0",
 )
@@ -29,7 +29,7 @@ app.add_middleware(
 @app.get("/")
 def root():
     """Simple health check that confirms the API is running."""
-    return {"message": "ZNGD API is running."}
+    return {"message": "ZimGENE API is running."}
 
 
 @app.get("/species")
