@@ -1,4 +1,4 @@
-# ZNGD Prototype (Zimbabwe National Genomic Database)
+# ZimGENE
 
 A domain-specific relational database and automated bio-data pipeline designed to curate, store, and analyze genomic sequences of agricultural pathogens affecting livestock and crops in Zimbabwe.
 
