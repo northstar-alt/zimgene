@@ -5,7 +5,7 @@ Curated genomic database and analysis pipeline for livestock and crop pathogens 
 **Live demo:** https://zimgene-web.onrender.com
 **API docs:** https://zimgene.onrender.com/docs
 
-![ZimGENE homepage showing organisms and sequences tables](docs/screenshot.png)
+![ZimGENE homepage showing organisms and sequences tables](docs/screenshot1.png)
 
 ---
 
